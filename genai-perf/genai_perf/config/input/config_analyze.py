@@ -60,7 +60,9 @@ class ConfigAnalyze(BaseConfig):
                 sweep_type in runtime_pa_parameters
                 or sweep_type in runtime_gap_parameters
             ):
-                if "step" in range_dict:
+                if "values" in range_dict:
+                    sweep_parameters[sweep_type] = range_dict["values"]
+                elif "step" in range_dict:
                     range_list = self._create_range_list(sweep_type, range_dict)
                     sweep_parameters[sweep_type] = range_list
                 else:

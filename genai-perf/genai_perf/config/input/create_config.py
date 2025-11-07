@@ -169,14 +169,23 @@ class CreateConfig:
     ) -> ConfigCommand:
         if args.subcommand and args.subcommand == "analyze":
             config.analyze.sweep_parameters = {}
-            if args.sweep_list:
-                sweep_parameters = {args.sweep_type: args.sweep_list}
-            else:
+            if getattr(args, "sweep_min", None) and getattr(args, "sweep_max", None):
                 sweep_parameters = {
                     args.sweep_type: {"start": args.sweep_min, "stop": args.sweep_max}
                 }
-                if args.sweep_step:
+                if getattr(args, "sweep_step", None):
                     sweep_parameters[args.sweep_type]["step"] = args.sweep_step
+            else:
+                if args.sweep_list:
+                    min_val = min(args.sweep_list)
+                    max_val = max(args.sweep_list)
+                    sweep_parameters = {
+                        args.sweep_type: {
+                            "start": min_val,
+                            "stop": max_val,
+                            "values": args.sweep_list,
+                        }
+                    }
 
             config.analyze.parse(sweep_parameters)
 
